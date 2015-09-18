@@ -13,6 +13,10 @@ namespace SleepyBaby.RaspberryPi.Sensors
         {
         }
 
+        /// <summary>
+        /// Gets reading of photocell at end of laser beam to determine if beam is broken
+        /// </summary>
+        /// <returns>Returns 1.0 if beam broken, otherwise 0.0</returns>
         protected override double GetReading()
         {
             var photocellReading = TransferReadingFromMcp3008();

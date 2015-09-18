@@ -13,11 +13,15 @@ namespace SleepyBaby.RaspberryPi.Sensors
         {
         }
 
+        /// <summary>
+        /// Gets reading of sensor switch to detect vibration
+        /// </summary>
+        /// <returns>Returns 1.0 if vibration detected, otherwise 0.0</returns>
         protected override double GetReading()
         {
             var sensorReading = TransferReadingFromMcp3008();
 
-            // When "Fast Vibration Sensor Switch" (SW-18010P) sensor connected to 3.3V with 3.3k pull-up resistor
+            // When vibration sensor switch is connected to 3.3V
             if (sensorReading < 1023)
             {
                 // vibration detected

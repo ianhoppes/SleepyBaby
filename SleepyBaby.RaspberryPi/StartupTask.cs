@@ -26,6 +26,8 @@ namespace SleepyBaby.RaspberryPi
         {
             InitMcp3008();
             InitSensors();
+            
+            // 
             while (true)
             {
 
@@ -34,9 +36,9 @@ namespace SleepyBaby.RaspberryPi
 
         private async void InitMcp3008()
         {
-            //using SPI0 on the Pi
+            // using SPI0 on the Pi
             var spiSettings = new SpiConnectionSettings(0); //for spi bus index 0
-            spiSettings.ClockFrequency = 10000; //10kHz-3.6MHz
+            spiSettings.ClockFrequency = 10000; // 10kHz-3.6MHz
             spiSettings.Mode = SpiMode.Mode0;
 
             var spiQuery = SpiDevice.GetDeviceSelector("SPI0");
@@ -53,11 +55,11 @@ namespace SleepyBaby.RaspberryPi
 
         private void InitSensors()
         {
-            //_tmp36 = new Tmp36(_mcp3008, 0, TimeSpan.FromMinutes(15));
-            //_tmp36.DataReadEvent += Tmp36_DataReadEvent;
+            _tmp36 = new Tmp36(_mcp3008, 0, TimeSpan.FromMinutes(15));
+            _tmp36.DataReadEvent += Tmp36_DataReadEvent;
 
-            //_laserBreakBeam = new LaserBreakBeam(_mcp3008, 1, TimeSpan.FromSeconds(5));
-            //_laserBreakBeam.DataReadEvent += LaserBreakBeam_DataReadEvent;
+            _laserBreakBeam = new LaserBreakBeam(_mcp3008, 1, TimeSpan.FromSeconds(5));
+            _laserBreakBeam.DataReadEvent += LaserBreakBeam_DataReadEvent;
 
             _vibration = new Vibration(_mcp3008, 2, TimeSpan.FromSeconds(1));
             _vibration.DataReadEvent += Vibration_DataReadEvent;

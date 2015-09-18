@@ -25,6 +25,10 @@ namespace SleepyBaby.RaspberryPi.Sensors
 
         protected abstract double GetReading();
 
+        /// <summary>
+        /// Gets value of sensor from the specified channel of the MCP3008. <a href="http://blog.falafel.com/mcp3008-analog-to-digital-conversion/">More information</a>
+        /// </summary>
+        /// <returns>Sensor reading as double</returns>
         protected double TransferReadingFromMcp3008()
         {
             var channelByte = (byte)((8 + _channel) << 4);
@@ -32,10 +36,7 @@ namespace SleepyBaby.RaspberryPi.Sensors
             var receiveBuffer = new byte[3];
 
             _mcp3008.TransferFullDuplex(transmitBuffer, receiveBuffer);
-            //first byte returned is 0 (00000000), 
-            //second byte returned we are only interested in the last 2 bits 00000011 (mask of &3) 
-            //then shift result 8 bits to make room for the data from the 3rd byte (makes 10 bits total)
-            //third byte, need all bits, simply add it to the above result 
+
             double sensorData = ((receiveBuffer[1] & 3) << 8) + receiveBuffer[2];
 
             return sensorData;
