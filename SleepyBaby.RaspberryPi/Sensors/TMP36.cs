@@ -20,7 +20,7 @@ namespace SleepyBaby.RaspberryPi.Sensors
         {
             this._mcp3008 = mcp3008;
             this._channel = channel;
-            this._dataReadTimer = ThreadPoolTimer.CreatePeriodicTimer(DataReadTimer_Tick, TimeSpan.FromSeconds(10));
+            this._dataReadTimer = ThreadPoolTimer.CreatePeriodicTimer(DataReadTimer_Tick, dataReadInterval);
         }
 
         private void DataReadTimer_Tick(ThreadPoolTimer timer)
