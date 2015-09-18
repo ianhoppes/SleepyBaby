@@ -21,6 +21,7 @@ namespace SleepyBaby.RaspberryPi
         private Tmp36 _tmp36;
         private LaserBreakBeam _laserBreakBeam;
         private Vibration _vibration;
+        private bool _laserBeamBroken = false;
 
         public void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -67,22 +68,24 @@ namespace SleepyBaby.RaspberryPi
 
         private void Tmp36_DataReadEvent(object sender, SensorEventArgs e)
         {
-            Debug.WriteLine("Tmp36: " + e.Reading);
+            Debug.WriteLine("Current Temperature " + e.Reading);
         }
 
         private void LaserBreakBeam_DataReadEvent(object sender, SensorEventArgs e)
         {
-            if (e.Reading == 1)
+            if (e.Reading == 1 &&
+                !_laserBeamBroken)
             {
-                Debug.WriteLine("Laser Break Beam: " + e.Reading);
+                Debug.WriteLine("Laser Beam Broken");
             }
+            _laserBeamBroken = (e.Reading == 1);
         }
 
         private void Vibration_DataReadEvent(object sender, SensorEventArgs e)
         {
             if (e.Reading == 1)
             {
-                Debug.WriteLine("Vibration: " + e.Reading);
+                Debug.WriteLine("Vibration Detected");
             }
         }
     }
