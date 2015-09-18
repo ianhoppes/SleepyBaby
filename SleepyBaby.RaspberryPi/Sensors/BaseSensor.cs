@@ -23,14 +23,30 @@ namespace SleepyBaby.RaspberryPi.Sensors
             this._dataReadTimer = ThreadPoolTimer.CreatePeriodicTimer(DataReadTimer_Tick, dataReadInterval);
         }
 
-        protected abstract double GetData();
+        protected abstract double GetReading();
+
+        protected double TransferReadingFromMcp3008()
+        {
+            var channelByte = (byte)((8 + _channel) << 4);
+            var transmitBuffer = new byte[3] { 1, channelByte, 0x00 };
+            var receiveBuffer = new byte[3];
+
+            _mcp3008.TransferFullDuplex(transmitBuffer, receiveBuffer);
+            //first byte returned is 0 (00000000), 
+            //second byte returned we are only interested in the last 2 bits 00000011 (mask of &3) 
+            //then shift result 8 bits to make room for the data from the 3rd byte (makes 10 bits total)
+            //third byte, need all bits, simply add it to the above result 
+            double sensorData = ((receiveBuffer[1] & 3) << 8) + receiveBuffer[2];
+
+            return sensorData;
+        }
 
         protected void DataReadTimer_Tick(ThreadPoolTimer timer)
         {
-            var data = GetData();
+            var reading = GetReading();
 
             if (DataReadEvent != null)
-                DataReadEvent(this, new SensorEventArgs { Value = data });
+                DataReadEvent(this, new SensorEventArgs { Reading = reading });
         }
     }
 }

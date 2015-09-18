@@ -57,7 +57,7 @@ namespace SleepyBaby.RaspberryPi
 
         private void Tmp36_DataReadEvent(object sender, SensorEventArgs e)
         {
-            Debug.WriteLine("Tmp36: " + e.Value);
+            Debug.WriteLine("Tmp36: " + e.Reading);
         }
     }
 }

@@ -8,6 +8,6 @@ namespace SleepyBaby.RaspberryPi.Sensors
 {
     class SensorEventArgs
     {
-        public double Value { get; set; }
+        public double Reading { get; set; }
     }
 }
