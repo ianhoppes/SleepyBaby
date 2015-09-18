@@ -20,6 +20,7 @@ namespace SleepyBaby.RaspberryPi
         private SpiDevice _mcp3008;
         private Tmp36 _tmp36;
         private LaserBreakBeam _laserBreakBeam;
+        private Vibration _vibration;
 
         public void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -52,11 +53,14 @@ namespace SleepyBaby.RaspberryPi
 
         private void InitSensors()
         {
-            _tmp36 = new Tmp36(_mcp3008, 0, TimeSpan.FromMinutes(15));
-            _tmp36.DataReadEvent += Tmp36_DataReadEvent;
+            //_tmp36 = new Tmp36(_mcp3008, 0, TimeSpan.FromMinutes(15));
+            //_tmp36.DataReadEvent += Tmp36_DataReadEvent;
 
-            _laserBreakBeam = new LaserBreakBeam(_mcp3008, 1, TimeSpan.FromSeconds(5));
-            _laserBreakBeam.DataReadEvent += LaserBreakBeam_DataReadEvent;
+            //_laserBreakBeam = new LaserBreakBeam(_mcp3008, 1, TimeSpan.FromSeconds(5));
+            //_laserBreakBeam.DataReadEvent += LaserBreakBeam_DataReadEvent;
+
+            _vibration = new Vibration(_mcp3008, 2, TimeSpan.FromSeconds(1));
+            _vibration.DataReadEvent += Vibration_DataReadEvent;
         }
 
         private void Tmp36_DataReadEvent(object sender, SensorEventArgs e)
@@ -66,7 +70,18 @@ namespace SleepyBaby.RaspberryPi
 
         private void LaserBreakBeam_DataReadEvent(object sender, SensorEventArgs e)
         {
-            Debug.WriteLine("Laser Break Beam: " + e.Reading);
+            if (e.Reading == 1)
+            {
+                Debug.WriteLine("Laser Break Beam: " + e.Reading);
+            }
+        }
+
+        private void Vibration_DataReadEvent(object sender, SensorEventArgs e)
+        {
+            if (e.Reading == 1)
+            {
+                Debug.WriteLine("Vibration: " + e.Reading);
+            }
         }
     }
 }

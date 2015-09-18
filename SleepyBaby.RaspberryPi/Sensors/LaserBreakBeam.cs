@@ -23,13 +23,14 @@ namespace SleepyBaby.RaspberryPi.Sensors
             // Direct LED flashlight = ~1000
             // Laser = >1000
 
-            if (photocellReading > 1000)
+            if (photocellReading < 1000)
             {
-                return 0;
+                // beam broken
+                return 1;
             }
             else
             {
-                return 1;
+                return 0;
             }
         }
     }
