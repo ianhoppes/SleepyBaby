@@ -8,22 +8,13 @@ using Windows.System.Threading;
 
 namespace SleepyBaby.RaspberryPi.Sensors
 {
-    class Tmp36
+    class Tmp36: BaseSensor
     {
-        private readonly SpiDevice _mcp3008;
-        private readonly int _channel;
-        private readonly ThreadPoolTimer _dataReadTimer;
-
-        public event EventHandler<SensorEventArgs> DataReadEvent;
-
-        public Tmp36(SpiDevice mcp3008, int channel, TimeSpan dataReadInterval)
+        public Tmp36(SpiDevice mcp3008, int channel, TimeSpan dataReadInterval) : base(mcp3008, channel, dataReadInterval)
         {
-            this._mcp3008 = mcp3008;
-            this._channel = channel;
-            this._dataReadTimer = ThreadPoolTimer.CreatePeriodicTimer(DataReadTimer_Tick, dataReadInterval);
         }
 
-        private void DataReadTimer_Tick(ThreadPoolTimer timer)
+        protected override double GetData()
         {
             var channelByte = (byte)((8 + _channel) << 4);
             var transmitBuffer = new byte[3] { 1, channelByte, 0x00 };
@@ -38,10 +29,9 @@ namespace SleepyBaby.RaspberryPi.Sensors
             //TMP36 == 10mV/1degC ... 3.3V = 3300.0 mV, 10 bit chip # steps is 2 exp 10 == 1024
             var millivolts = sensorData * (3300.0 / 1024.0);
             var tempC = (millivolts - 500) / 10;
-            var tempF = Math.Round((tempC * 9.0 / 5.0) + 32, 1);
+            var tempF = (tempC * 9.0 / 5.0) + 32;
 
-            if (DataReadEvent != null)
-                DataReadEvent(this, new SensorEventArgs { Value = tempF });
+            return Math.Round(tempF, 1);
         }
     }
 }

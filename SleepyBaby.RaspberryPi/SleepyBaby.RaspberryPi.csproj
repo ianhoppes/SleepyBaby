@@ -96,6 +96,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Sensors\BaseSensor.cs" />
     <Compile Include="Sensors\SensorEventArgs.cs" />
     <Compile Include="Sensors\Tmp36.cs" />
     <Compile Include="StartupTask.cs" />
