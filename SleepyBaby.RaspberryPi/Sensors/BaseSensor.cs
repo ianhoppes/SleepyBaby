@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Spi;
-using Windows.System.Threading;
 
 namespace SleepyBaby.RaspberryPi.Sensors
 {
@@ -12,18 +11,14 @@ namespace SleepyBaby.RaspberryPi.Sensors
     {
         protected readonly SpiDevice _mcp3008;
         protected readonly int _channel;
-        protected readonly ThreadPoolTimer _dataReadTimer;
 
-        public event EventHandler<SensorEventArgs> DataReadEvent;
-
-        public BaseSensor(SpiDevice mcp3008, int channel, TimeSpan dataReadInterval)
+        public BaseSensor(SpiDevice mcp3008, int channel)
         {
             this._mcp3008 = mcp3008;
             this._channel = channel;
-            this._dataReadTimer = ThreadPoolTimer.CreatePeriodicTimer(DataReadTimer_Tick, dataReadInterval);
         }
 
-        protected abstract double GetReading();
+        public abstract double GetReading();
 
         /// <summary>
         /// Gets value of sensor from the specified channel of the MCP3008. <a href="http://blog.falafel.com/mcp3008-analog-to-digital-conversion/">More information</a>
@@ -40,14 +35,6 @@ namespace SleepyBaby.RaspberryPi.Sensors
             double sensorData = ((receiveBuffer[1] & 3) << 8) + receiveBuffer[2];
 
             return sensorData;
-        }
-
-        protected void DataReadTimer_Tick(ThreadPoolTimer timer)
-        {
-            var reading = GetReading();
-
-            if (DataReadEvent != null)
-                DataReadEvent(this, new SensorEventArgs { Reading = reading });
         }
     }
 }

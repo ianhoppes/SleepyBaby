@@ -9,7 +9,7 @@ namespace SleepyBaby.RaspberryPi.Sensors
 {
     class Vibration : BaseSensor
     {
-        public Vibration(SpiDevice mcp3008, int channel, TimeSpan dataReadInterval) : base(mcp3008, channel, dataReadInterval)
+        public Vibration(SpiDevice mcp3008, int channel) : base(mcp3008, channel)
         {
         }
 
@@ -17,7 +17,7 @@ namespace SleepyBaby.RaspberryPi.Sensors
         /// Gets reading of sensor switch to detect vibration
         /// </summary>
         /// <returns>Returns 1.0 if vibration detected, otherwise 0.0</returns>
-        protected override double GetReading()
+        public override double GetReading()
         {
             var sensorReading = TransferReadingFromMcp3008();
 

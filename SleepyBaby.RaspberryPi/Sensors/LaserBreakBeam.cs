@@ -9,7 +9,7 @@ namespace SleepyBaby.RaspberryPi.Sensors
 {
     class LaserBreakBeam : BaseSensor
     {
-        public LaserBreakBeam(SpiDevice mcp3008, int channel, TimeSpan dataReadInterval) : base(mcp3008, channel, dataReadInterval)
+        public LaserBreakBeam(SpiDevice mcp3008, int channel) : base(mcp3008, channel)
         {
         }
 
@@ -17,7 +17,7 @@ namespace SleepyBaby.RaspberryPi.Sensors
         /// Gets reading of photocell at end of laser beam to determine if beam is broken. <a href="https://learn.adafruit.com/photocells">More information</a>
         /// </summary>
         /// <returns>Returns 1.0 if beam broken, otherwise 0.0</returns>
-        protected override double GetReading()
+        public override double GetReading()
         {
             var photocellReading = TransferReadingFromMcp3008();
 

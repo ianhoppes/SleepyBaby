@@ -10,7 +10,7 @@ namespace SleepyBaby.RaspberryPi.Sensors
 {
     class Tmp36: BaseSensor
     {
-        public Tmp36(SpiDevice mcp3008, int channel, TimeSpan dataReadInterval) : base(mcp3008, channel, dataReadInterval)
+        public Tmp36(SpiDevice mcp3008, int channel) : base(mcp3008, channel)
         {
         }
 
@@ -18,7 +18,7 @@ namespace SleepyBaby.RaspberryPi.Sensors
         /// Gets temperature from TMP36 sensor. <a href="https://learn.adafruit.com/tmp36-temperature-sensor/using-a-temp-sensor">More information</a>
         /// </summary>
         /// <returns>Returns temperature in Fahrenheit scale rounded to one decimal place</returns>
-        protected override double GetReading()
+        public override double GetReading()
         {
             var sensorReading = TransferReadingFromMcp3008();
 

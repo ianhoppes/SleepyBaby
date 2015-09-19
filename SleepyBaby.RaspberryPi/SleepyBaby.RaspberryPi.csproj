@@ -98,7 +98,6 @@
   <ItemGroup>
     <Compile Include="Sensors\BaseSensor.cs" />
     <Compile Include="Sensors\LaserBreakBeam.cs" />
-    <Compile Include="Sensors\SensorEventArgs.cs" />
     <Compile Include="Sensors\Tmp36.cs" />
     <Compile Include="Sensors\Vibration.cs" />
     <Compile Include="StartupTask.cs" />

@@ -21,6 +21,9 @@ namespace SleepyBaby.RaspberryPi
         private Tmp36 _tmp36;
         private LaserBreakBeam _laserBreakBeam;
         private Vibration _vibration;
+        private ThreadPoolTimer _tmp36ReadTimer;
+        private ThreadPoolTimer _laserBreakBeamReadTimer;
+        private ThreadPoolTimer _vibrationReadTimer;
         private bool _laserBeamBroken = false;
 
         public void Run(IBackgroundTaskInstance taskInstance)
@@ -56,34 +59,37 @@ namespace SleepyBaby.RaspberryPi
 
         private void InitSensors()
         {
-            _tmp36 = new Tmp36(_mcp3008, 0, TimeSpan.FromMinutes(15));
-            _tmp36.DataReadEvent += Tmp36_DataReadEvent;
+            _tmp36 = new Tmp36(_mcp3008, 0);
+            _tmp36ReadTimer = ThreadPoolTimer.CreatePeriodicTimer(Tmp36ReadTimer_Tick, TimeSpan.FromMinutes(15));
 
-            _laserBreakBeam = new LaserBreakBeam(_mcp3008, 1, TimeSpan.FromSeconds(5));
-            _laserBreakBeam.DataReadEvent += LaserBreakBeam_DataReadEvent;
+            _laserBreakBeam = new LaserBreakBeam(_mcp3008, 1);
+            _laserBreakBeamReadTimer = ThreadPoolTimer.CreatePeriodicTimer(LaserBreakBeamReadTimer_Tick, TimeSpan.FromSeconds(5));
 
-            _vibration = new Vibration(_mcp3008, 2, TimeSpan.FromSeconds(1));
-            _vibration.DataReadEvent += Vibration_DataReadEvent;
+            _vibration = new Vibration(_mcp3008, 2);
+            _vibrationReadTimer = ThreadPoolTimer.CreatePeriodicTimer(VibrationReadTimer_Tick, TimeSpan.FromSeconds(1));
         }
 
-        private void Tmp36_DataReadEvent(object sender, SensorEventArgs e)
+        private void Tmp36ReadTimer_Tick(ThreadPoolTimer timer)
         {
-            Debug.WriteLine("Current Temperature " + e.Reading);
+            var reading = _tmp36.GetReading();
+            Debug.WriteLine("Current Temperature " + reading);
         }
 
-        private void LaserBreakBeam_DataReadEvent(object sender, SensorEventArgs e)
+        private void LaserBreakBeamReadTimer_Tick(ThreadPoolTimer timer)
         {
-            if (e.Reading == 1 &&
+            var reading = _laserBreakBeam.GetReading();
+            if (reading == 1 &&
                 !_laserBeamBroken)
             {
                 Debug.WriteLine("Laser Beam Broken");
             }
-            _laserBeamBroken = (e.Reading == 1);
+            _laserBeamBroken = (reading == 1);
         }
 
-        private void Vibration_DataReadEvent(object sender, SensorEventArgs e)
+        private void VibrationReadTimer_Tick(ThreadPoolTimer timer)
         {
-            if (e.Reading == 1)
+            var reading = _vibration.GetReading();
+            if (reading == 1)
             {
                 Debug.WriteLine("Vibration Detected");
             }
