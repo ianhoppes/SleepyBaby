@@ -30,8 +30,10 @@ namespace SleepyBaby.RaspberryPi
         {
             InitMcp3008();
             InitSensors();
-            
-            // 
+            SendInitialReadings();
+            InitTimers();
+
+            // loop forever so timers continue to run
             while (true)
             {
 
@@ -60,22 +62,41 @@ namespace SleepyBaby.RaspberryPi
         private void InitSensors()
         {
             _tmp36 = new Tmp36(_mcp3008, 0);
-            _tmp36ReadTimer = ThreadPoolTimer.CreatePeriodicTimer(Tmp36ReadTimer_Tick, TimeSpan.FromMinutes(15));
-
             _laserBreakBeam = new LaserBreakBeam(_mcp3008, 1);
-            _laserBreakBeamReadTimer = ThreadPoolTimer.CreatePeriodicTimer(LaserBreakBeamReadTimer_Tick, TimeSpan.FromSeconds(5));
-
             _vibration = new Vibration(_mcp3008, 2);
+        }
+
+        private void InitTimers()
+        {
+            _tmp36ReadTimer = ThreadPoolTimer.CreatePeriodicTimer(Tmp36ReadTimer_Tick, TimeSpan.FromMinutes(15));
+            _laserBreakBeamReadTimer = ThreadPoolTimer.CreatePeriodicTimer(LaserBreakBeamReadTimer_Tick, TimeSpan.FromSeconds(5));
             _vibrationReadTimer = ThreadPoolTimer.CreatePeriodicTimer(VibrationReadTimer_Tick, TimeSpan.FromSeconds(1));
         }
 
+        private void SendInitialReadings()
+        {
+            SendTmp36Reading();
+            SendLaserBreakBeamReading();
+            SendVibrationReading();
+        }
+
         private void Tmp36ReadTimer_Tick(ThreadPoolTimer timer)
+        {
+            SendTmp36Reading();
+        }
+
+        private void SendTmp36Reading()
         {
             var reading = _tmp36.GetReading();
             Debug.WriteLine("Current Temperature " + reading);
         }
 
         private void LaserBreakBeamReadTimer_Tick(ThreadPoolTimer timer)
+        {
+            SendLaserBreakBeamReading();
+        }
+
+        private void SendLaserBreakBeamReading()
         {
             var reading = _laserBreakBeam.GetReading();
             if (reading == 1 &&
@@ -87,6 +108,11 @@ namespace SleepyBaby.RaspberryPi
         }
 
         private void VibrationReadTimer_Tick(ThreadPoolTimer timer)
+        {
+            SendVibrationReading();
+        }
+
+        private void SendVibrationReading()
         {
             var reading = _vibration.GetReading();
             if (reading == 1)
